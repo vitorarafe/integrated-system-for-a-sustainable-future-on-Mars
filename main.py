@@ -1,6 +1,8 @@
 """Interface de linha de comando do Sistema Integrado de Futuro Sustentável em Marte."""
 
 import sqlite3
+from regras_logicas import filtrar_alertas, tabela_verdade
+from estruturas import FilaAlertas, HeapPrioridade
 
 from crud import (
     atualizar_registro,
@@ -64,7 +66,30 @@ def excluir() -> None:
     else:
         print("Registro não encontrado.")
 
+def analisar_alertas() -> None:
+    registros = listar_registros()
+    alertas = filtrar_alertas(registros)
+    if not alertas:
+        print("Nenhum alerta: nenhum setor crítico com consumo alto.")
+        return
 
+    fila = FilaAlertas()
+    heap = HeapPrioridade()
+    for alerta in alertas:
+        fila.enfileirar(alerta)
+        heap.inserir(alerta, alerta["valor"])
+
+    print(f"\n{len(alertas)} alerta(s) detectado(s).")
+    print("\nOrdem de chegada (fila):")
+    while not fila.vazia():
+        a = fila.desenfileirar()
+        print(f" - {a['setor']}: {a['valor']:g} {a['unidade']}")
+
+    print("\nOrdem de urgência (heap):")
+    while len(heap) > 0:
+        a = heap.extrair_maior()
+        print(f" - {a['setor']}: {a['valor']:g} {a['unidade']}")
+        
 def executar() -> None:
     try:
         inicializar_banco()
@@ -79,6 +104,8 @@ def executar() -> None:
             "2. Listar registros\n"
             "3. Alterar registro\n"
             "4. Excluir registro\n"
+            "5. Analisar alertas (regra lógica)\n"
+            "6. Tabela verdade\n"
             "0. Sair"
         )
         opcao = input("Escolha uma opção: ").strip()
@@ -92,6 +119,10 @@ def executar() -> None:
                 atualizar()
             elif opcao == "4":
                 excluir()
+            elif opcao == "5":
+                analisar_alertas()
+            elif opcao == "6":
+                tabela_verdade()
             elif opcao == "0":
                 print("Encerrando o SIFSM.")
                 break
