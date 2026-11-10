@@ -11,12 +11,6 @@ def _normalizar(texto):
     sem_acento = unicodedata.normalize("NFD", str(texto))
     sem_acento = "".join(c for c in sem_acento if unicodedata.category(c) != "Mn")
     return sem_acento.strip().lower().replace(" ", "_")
-
-sensores = [
-    {"habitacao": "a", "carga": 10},
-    {"comunicacao": "b", "carga": 15},
-    {"suporte_medico": "c", "carga": 25}
-]
 # ---------- Entradas da regra (A e B da tabela verdade) ----------
 def consumo_alto(registro):
     return _normalizar(registro["indicador"]) == "energia" and registro["valor"] > LIMITE_CONSUMO_ALTO
@@ -44,7 +38,6 @@ def tabela_verdade():
             print(f"        {int(a)}        |         {int(b)}         |     {int(a and b)}")
             
 if __name__ == "__main__":
-
     testes = [
     {"indicador": "energia", "valor": 150, "setor": "comunicacao"},
     {"indicador": "energia", "valor": 230, "setor": "habitacao"},

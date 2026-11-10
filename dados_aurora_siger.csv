@@ -1,0 +1,8 @@
+indicador,valor,unidade,setor,observacoes
+energia,150,kWh,comunicacao,consumo dentro do limite
+energia,230,kWh,habitacao,consumo alto em setor critico
+energia,250,kWh,laboratorio,consumo alto em setor nao critico
+energia,90,kWh,agricultura,consumo baixo
+energia,260,kWh,suporte_medico,consumo alto em setor critico
+agua,500,L,habitacao,consumo diario
+producao,35,kg,agricultura,colheita da estufa

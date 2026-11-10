@@ -1,6 +1,10 @@
 """Interface de linha de comando do Sistema Integrado de Futuro Sustentável em Marte."""
 
 import sqlite3
+import agentes_ia
+import modelo_linear
+import regressao_linear
+import simulacao_computacional
 from regras_logicas import filtrar_alertas, tabela_verdade
 from estruturas import FilaAlertas, HeapPrioridade
 
@@ -89,7 +93,40 @@ def analisar_alertas() -> None:
     while len(heap) > 0:
         a = heap.extrair_maior()
         print(f" - {a['setor']}: {a['valor']:g} {a['unidade']}")
-        
+
+def explicar_circuito() -> None:
+    print("\n=== Circuito lógico (Arduino / Tinkercad) ===")
+    print("Entradas: botão A (pino 2) = consumo alto | botão B (pino 3) = setor crítico")
+    print("Saída: LED (pino 13) = alerta")
+    print("Regra: S = A E B (o LED só acende se A e B estiverem ativos)")
+    print("Link do circuito: [colar o link do Tinkercad]")
+    tabela_verdade()
+
+
+def analisar_sustentabilidade() -> None:
+    print("\n=== ANÁLISE DE SUSTENTABILIDADE DA COLÔNIA ===")
+
+    print("\n[1/4] Registros, regra lógica e estruturas de dados")
+    exibir_registros()
+    analisar_alertas()
+
+    print("\n[2/4] Simulação da bateria (feche o gráfico para continuar)")
+    simulacao_computacional.executar_simulacao()
+
+    print("\n[3/4] Previsão de consumo (regressão linear)")
+    regressao_linear.analise_exploratoria()
+    regressao_linear.avaliar_modelo()
+
+    print("\n[4/4] Conclusão")
+    alertas = filtrar_alertas(listar_registros())
+    if alertas:
+        print(f"Recomendação: {len(alertas)} registro(s) crítico(s) acima do limite. "
+              "Priorizar o de maior consumo e avaliar economia de energia.")
+    else:
+        print("Recomendação: manter o monitoramento; nenhum setor crítico acima do limite.")
+    print("Limitações: dados simulados, modelos lineares simples, agentes por regras.")
+    print("A decisão final deve ser validada por um responsável humano.")
+
 def executar() -> None:
     try:
         inicializar_banco()
@@ -105,7 +142,12 @@ def executar() -> None:
             "3. Alterar registro\n"
             "4. Excluir registro\n"
             "5. Analisar alertas (regra lógica)\n"
-            "6. Tabela verdade\n"
+            "6. Tabela verdade e circuito lógico\n"
+            "7. Simulação da bateria\n"
+            "8. Modelo linear: consumo por ciclo\n"
+            "9. Modelo linear: consumo por tripulantes\n"
+            "10. Assistente com agentes\n"
+            "11. Analisar sustentabilidade da colônia\n"
             "0. Sair"
         )
         opcao = input("Escolha uma opção: ").strip()
@@ -122,7 +164,17 @@ def executar() -> None:
             elif opcao == "5":
                 analisar_alertas()
             elif opcao == "6":
-                tabela_verdade()
+                explicar_circuito()
+            elif opcao == "7":
+                simulacao_computacional.executar_simulacao()
+            elif opcao == "8":
+                regressao_linear.menu()
+            elif opcao == "9":
+                modelo_linear.executar_modelo_linear()
+            elif opcao == "10":
+                agentes_ia.menu_agentes()
+            elif opcao == "11":
+                analisar_sustentabilidade()
             elif opcao == "0":
                 print("Encerrando o SIFSM.")
                 break
@@ -134,7 +186,6 @@ def executar() -> None:
             print("Operação concluída.")
         finally:
             print()
-
 
 if __name__ == "__main__":
     executar()
